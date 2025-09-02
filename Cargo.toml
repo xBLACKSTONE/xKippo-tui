@@ -13,7 +13,7 @@ categories = ["command-line-utilities", "security-tools"]
 [dependencies]
 # TUI Libraries
 ratatui = "0.23.0"  # TUI framework
-tui = { version = "0.19.0", default-features = false, features = ["crossterm"], package = "ratatui" }  # Aliased as tui for backward compatibility
+tui = { version = "0.23.0", default-features = false, features = ["crossterm"], package = "ratatui" }  # Aliased as tui for backward compatibility
 crossterm = "0.26.0"  # Terminal backend
 tui-textarea = "0.2.0"  # Text input widget
 
