@@ -52,7 +52,8 @@ ipnetwork = "0.20.0"  # IP address handling
 lazy_static = "1.4.0"
 parking_lot = "0.12.1"  # Improved mutex implementations
 dashmap = "5.5.3"  # Concurrent hashmap
-rayon = "1.7.0"  # Parallel iterators
+rayon = "=1.7.0"  # Parallel iterators
+rayon-core = "=1.11.0"  # Pinned to version compatible with rustc 1.75.0
 regex = "1.9.5"
 clap = { version = "4.4.6", features = ["derive"] }
 indicatif = "0.17.7"  # Progress bars
