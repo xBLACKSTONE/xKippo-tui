@@ -22,6 +22,27 @@ pub struct Config {
     /// GeoIP configuration
     #[serde(default)]
     pub geoip: GeoIPConfig,
+    /// Security analyst features
+    #[serde(default)]
+    pub security_analyst: SecurityAnalystConfig,
+    /// Threat intelligence features
+    #[serde(default)]
+    pub threat_intel: ThreatIntelConfig,
+    /// Malware analysis features
+    #[serde(default)]
+    pub malware_analysis: MalwareAnalysisConfig,
+    /// SIEM integration
+    #[serde(default)]
+    pub siem_integration: SIEMIntegrationConfig,
+    /// Export configuration
+    #[serde(default)]
+    pub export: ExportConfig,
+    /// Dashboard configuration
+    #[serde(default)]
+    pub dashboard: DashboardConfig,
+    /// Rules configuration
+    #[serde(default)]
+    pub rules: RulesConfig,
 }
 
 /// Honeypot-specific configuration
@@ -270,6 +291,13 @@ impl Default for Config {
             logging: LoggingConfig::default(),
             alert: AlertConfig::default(),
             geoip: GeoIPConfig::default(),
+            security_analyst: SecurityAnalystConfig::default(),
+            threat_intel: ThreatIntelConfig::default(),
+            malware_analysis: MalwareAnalysisConfig::default(),
+            siem_integration: SIEMIntegrationConfig::default(),
+            export: ExportConfig::default(),
+            dashboard: DashboardConfig::default(),
+            rules: RulesConfig::default(),
         }
     }
 }
@@ -437,4 +465,247 @@ fn default_log_size() -> u64 {
 
 fn default_log_files() -> u32 {
     5
+}
+
+/// Security analyst features configuration
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SecurityAnalystConfig {
+    /// Enable security analyst features
+    #[serde(default = "default_true")]
+    pub enabled: bool,
+    /// Log retention in days (0 = unlimited)
+    #[serde(default)]
+    pub log_retention: u32,
+}
+
+impl Default for SecurityAnalystConfig {
+    fn default() -> Self {
+        Self {
+            enabled: default_true(),
+            log_retention: 0,
+        }
+    }
+}
+
+/// Threat intelligence configuration
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ThreatIntelConfig {
+    /// Enable threat intelligence
+    #[serde(default)]
+    pub enabled: bool,
+    /// Auto-update frequency in hours (0 = disable)
+    #[serde(default = "default_ti_update_frequency")]
+    pub update_frequency: u32,
+    /// Directory to store threat intelligence data
+    pub data_dir: Option<String>,
+    /// Threat intelligence feeds
+    #[serde(default)]
+    pub feeds: Vec<String>,
+}
+
+impl Default for ThreatIntelConfig {
+    fn default() -> Self {
+        Self {
+            enabled: false,
+            update_frequency: default_ti_update_frequency(),
+            data_dir: None,
+            feeds: Vec::new(),
+        }
+    }
+}
+
+/// Malware analysis configuration
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct MalwareAnalysisConfig {
+    /// Enable basic malware analysis for downloaded files
+    #[serde(default)]
+    pub enabled: bool,
+    /// Maximum file size to analyze (in MB)
+    #[serde(default = "default_malware_max_size")]
+    pub max_file_size: u32,
+    /// Save analysis reports
+    #[serde(default = "default_true")]
+    pub save_reports: bool,
+    /// Analysis report directory
+    pub report_dir: Option<String>,
+    /// VirusTotal API integration
+    #[serde(default)]
+    pub virustotal_enabled: bool,
+    /// VirusTotal API key
+    pub virustotal_api_key: Option<String>,
+}
+
+impl Default for MalwareAnalysisConfig {
+    fn default() -> Self {
+        Self {
+            enabled: false,
+            max_file_size: default_malware_max_size(),
+            save_reports: default_true(),
+            report_dir: None,
+            virustotal_enabled: false,
+            virustotal_api_key: None,
+        }
+    }
+}
+
+/// SIEM integration configuration
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SIEMIntegrationConfig {
+    /// Enable SIEM integration
+    #[serde(default)]
+    pub enabled: bool,
+    /// SIEM type (elk, splunk, graylog, custom)
+    #[serde(default = "default_siem_type")]
+    pub siem_type: String,
+    /// SIEM endpoint URL
+    pub siem_url: Option<String>,
+    /// Authentication token (if needed)
+    pub auth_token: Option<String>,
+    /// Batch size for sending events
+    #[serde(default = "default_batch_size")]
+    pub batch_size: u32,
+    /// Send interval in seconds
+    #[serde(default = "default_send_interval")]
+    pub send_interval: u32,
+}
+
+impl Default for SIEMIntegrationConfig {
+    fn default() -> Self {
+        Self {
+            enabled: false,
+            siem_type: default_siem_type(),
+            siem_url: None,
+            auth_token: None,
+            batch_size: default_batch_size(),
+            send_interval: default_send_interval(),
+        }
+    }
+}
+
+/// Export configuration
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ExportConfig {
+    /// Enable data export
+    #[serde(default)]
+    pub enabled: bool,
+    /// Available export formats
+    #[serde(default)]
+    pub formats: Vec<String>,
+    /// Default export directory
+    pub export_dir: Option<String>,
+}
+
+impl Default for ExportConfig {
+    fn default() -> Self {
+        Self {
+            enabled: false,
+            formats: Vec::new(),
+            export_dir: None,
+        }
+    }
+}
+
+/// Dashboard configuration
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct DashboardConfig {
+    /// Dashboard layout type
+    #[serde(default = "default_layout")]
+    pub layout: String,
+    /// Refresh interval in seconds
+    #[serde(default = "default_dashboard_refresh")]
+    pub refresh_interval: u32,
+    /// Show attack map
+    #[serde(default = "default_true")]
+    pub show_map: bool,
+    /// Show statistics panel
+    #[serde(default = "default_true")]
+    pub show_stats: bool,
+    /// Show alerts panel
+    #[serde(default = "default_true")]
+    pub show_alerts: bool,
+    /// Show top attackers panel
+    #[serde(default = "default_true")]
+    pub show_top_attackers: bool,
+    /// Show command cloud
+    #[serde(default = "default_true")]
+    pub show_command_cloud: bool,
+}
+
+impl Default for DashboardConfig {
+    fn default() -> Self {
+        Self {
+            layout: default_layout(),
+            refresh_interval: default_dashboard_refresh(),
+            show_map: default_true(),
+            show_stats: default_true(),
+            show_alerts: default_true(),
+            show_top_attackers: default_true(),
+            show_command_cloud: default_true(),
+        }
+    }
+}
+
+/// Rules configuration
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct RulesConfig {
+    /// Directory for custom detection rules
+    pub rules_dir: Option<String>,
+    /// Auto-reload rules on change
+    #[serde(default = "default_true")]
+    pub auto_reload: bool,
+    /// Enable correlation engine
+    #[serde(default)]
+    pub enable_correlation: bool,
+    /// Minimum risk score for alerts (0-100)
+    #[serde(default = "default_min_risk_score")]
+    pub min_risk_score: u8,
+    /// Alert on new attacker IPs
+    #[serde(default)]
+    pub alert_new_ips: bool,
+}
+
+impl Default for RulesConfig {
+    fn default() -> Self {
+        Self {
+            rules_dir: None,
+            auto_reload: default_true(),
+            enable_correlation: false,
+            min_risk_score: default_min_risk_score(),
+            alert_new_ips: false,
+        }
+    }
+}
+
+// Additional default values for security analyst features
+
+fn default_ti_update_frequency() -> u32 {
+    24
+}
+
+fn default_malware_max_size() -> u32 {
+    5
+}
+
+fn default_siem_type() -> String {
+    "elk".into()
+}
+
+fn default_batch_size() -> u32 {
+    100
+}
+
+fn default_send_interval() -> u32 {
+    30
+}
+
+fn default_layout() -> String {
+    "standard".into()
+}
+
+fn default_dashboard_refresh() -> u32 {
+    10
+}
+
+fn default_min_risk_score() -> u8 {
+    50
 }

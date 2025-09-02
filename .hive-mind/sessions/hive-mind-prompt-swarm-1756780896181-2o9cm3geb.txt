@@ -14,9 +14,9 @@ HIVE MIND CONFIGURATION:
 
 WORKER DISTRIBUTION:
 • researcher: 1 agents
-• coder: 1 agents
-• analyst: 1 agents
-• tester: 1 agents
+• coder: 3 agents
+• analyst: 3 agents
+• tester: 2 agents
 
 🔧 AVAILABLE MCP TOOLS FOR HIVE MIND COORDINATION:
 

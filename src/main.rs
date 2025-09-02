@@ -77,15 +77,37 @@ async fn main() -> Result<()> {
 
 /// Run the setup wizard
 async fn run_setup(config: &config::Config) -> Result<()> {
-    println!("Running xKippo setup...");
+    use std::process::Command;
+    use std::path::Path;
     
-    // TODO: Implement setup script that:
-    // 1. Detects cowrie installation
-    // 2. Finds log locations
-    // 3. Configures monitoring options
-    // 4. Sets up GeoIP database
-    // 5. Saves configuration
-
+    println!("Running xKippo-tui advanced security analyst setup...");
+    
+    // Find the setup script
+    let script_path = Path::new(env!("CARGO_MANIFEST_DIR")).join("scripts").join("setup.sh");
+    
+    if !script_path.exists() {
+        return Err(anyhow::anyhow!("Setup script not found at {}", script_path.display()));
+    }
+    
+    // Ensure the script is executable
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::PermissionsExt;
+        let metadata = std::fs::metadata(&script_path)?;
+        let mut perms = metadata.permissions();
+        perms.set_mode(0o755); // rwxr-xr-x
+        std::fs::set_permissions(&script_path, perms)?;
+    }
+    
+    // Execute the setup script
+    let status = Command::new(&script_path)
+        .status()
+        .context("Failed to execute setup script")?;
+    
+    if !status.success() {
+        return Err(anyhow::anyhow!("Setup script failed with exit code: {}", status));
+    }
+    
     println!("Setup completed successfully. Run xKippo-tui to start monitoring.");
     Ok(())
 }

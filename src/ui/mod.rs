@@ -4,6 +4,8 @@ mod logs;
 mod sessions;
 mod settings;
 mod help;
+mod security;
+mod geography;
 
 use anyhow::{Context, Result};
 use crossterm::{
@@ -32,6 +34,8 @@ pub use logs::*;
 pub use sessions::*;
 pub use settings::*;
 pub use help::*;
+pub use security::*;
+pub use geography::*;
 
 /// Starts the UI event loop
 pub fn start_ui(mut app: App) -> Result<()> {
@@ -147,32 +151,36 @@ async fn handle_input(event: Event, app: &mut App) -> Result<bool> {
                 return Ok(false);
             }
             KeyCode::Tab => {
-                app.selected_tab = (app.selected_tab + 1) % 4;
+                app.selected_tab = (app.selected_tab + 1) % 6;
             }
             KeyCode::BackTab => {
-                app.selected_tab = (app.selected_tab + 3) % 4;
+                app.selected_tab = (app.selected_tab + 5) % 6;
             }
             KeyCode::Left => {
                 if app.selected_tab > 0 {
                     app.selected_tab -= 1;
                 } else {
-                    app.selected_tab = 3;
+                    app.selected_tab = 5;
                 }
             }
             KeyCode::Right => {
-                app.selected_tab = (app.selected_tab + 1) % 4;
+                app.selected_tab = (app.selected_tab + 1) % 6;
             }
             KeyCode::Char('1') => app.selected_tab = 0,
             KeyCode::Char('2') => app.selected_tab = 1,
             KeyCode::Char('3') => app.selected_tab = 2,
             KeyCode::Char('4') => app.selected_tab = 3,
+            KeyCode::Char('5') => app.selected_tab = 4,
+            KeyCode::Char('6') => app.selected_tab = 5,
             _ => {
                 // Handle tab-specific input
                 match app.selected_tab {
                     0 => handle_dashboard_input(key, app).await?,
-                    1 => handle_logs_input(key, app).await?,
-                    2 => handle_sessions_input(key, app).await?,
-                    3 => handle_settings_input(key, app).await?,
+                    1 => handle_security_input(key, app).await?,
+                    2 => handle_logs_input(key, app).await?,
+                    3 => handle_sessions_input(key, app).await?,
+                    4 => handle_geography_input(key, app).await?,
+                    5 => handle_settings_input(key, app).await?,
                     _ => {}
                 }
             }
@@ -212,7 +220,7 @@ fn ui<B: Backend>(f: &mut Frame<B>, app: &App) {
         .split(size);
     
     // Create tabs
-    let titles = vec!["Dashboard", "Logs", "Sessions", "Settings"];
+    let titles = vec!["Dashboard", "Security", "Logs", "Sessions", "Geography", "Settings"];
     let tabs = Tabs::new(titles.iter().map(|t| Span::styled(*t, Style::default())).collect())
         .select(app.selected_tab)
         .block(Block::default().title("xKippo Honeypot Monitor").borders(Borders::ALL))
@@ -224,9 +232,11 @@ fn ui<B: Backend>(f: &mut Frame<B>, app: &App) {
     // Render the selected tab
     match app.selected_tab {
         0 => render_dashboard(f, app, chunks[1]),
-        1 => render_logs(f, app, chunks[1]),
-        2 => render_sessions(f, app, chunks[1]),
-        3 => render_settings(f, app, chunks[1]),
+        1 => render_security_dashboard(f, app, chunks[1]),
+        2 => render_logs(f, app, chunks[1]),
+        3 => render_sessions(f, app, chunks[1]),
+        4 => render_geography(f, app, chunks[1]),
+        5 => render_settings(f, app, chunks[1]),
         _ => {}
     }
     
@@ -273,5 +283,39 @@ async fn handle_sessions_input(key: event::KeyEvent, app: &mut App) -> Result<()
 
 async fn handle_settings_input(key: event::KeyEvent, app: &mut App) -> Result<()> {
     // Implementation will be added later
+    Ok(())
+}
+
+/// Handle input for the security dashboard
+async fn handle_security_input(key: event::KeyEvent, app: &mut App) -> Result<()> {
+    match key.code {
+        KeyCode::Char('f') => {
+            // Filter by risk score
+        },
+        KeyCode::Char('s') => {
+            // Sort by different metrics
+        },
+        KeyCode::Char('t') => {
+            // Toggle different views
+        },
+        _ => {}
+    }
+    Ok(())
+}
+
+/// Handle input for the geography view
+async fn handle_geography_input(key: event::KeyEvent, app: &mut App) -> Result<()> {
+    match key.code {
+        KeyCode::Char('z') => {
+            // Zoom in
+        },
+        KeyCode::Char('Z') => {
+            // Zoom out
+        },
+        KeyCode::Char('r') => {
+            // Reset view
+        },
+        _ => {}
+    }
     Ok(())
 }
