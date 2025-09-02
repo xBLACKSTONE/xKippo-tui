@@ -1,0 +1,94 @@
+[package]
+name = "xkippo-tui"
+version = "0.1.0"
+edition = "2021"
+authors = ["xKippo Team"]
+description = "A TUI monitoring and management system for Cowrie honeypots"
+readme = "README.md"
+license = "MIT"
+repository = "https://github.com/yourusername/xkippo-tui"
+keywords = ["honeypot", "cowrie", "security", "tui", "monitoring"]
+categories = ["command-line-utilities", "security-tools"]
+
+[dependencies]
+# TUI Libraries
+ratatui = "0.24.0"  # TUI framework
+crossterm = "0.27.0"  # Terminal backend
+tui-textarea = "0.2.0"  # Text input widget
+
+# Async Runtime
+tokio = { version = "1.32.0", features = ["full"] }
+
+# Configuration
+serde = { version = "1.0.188", features = ["derive"] }
+toml = "0.8.0"
+dirs = "5.0.1"  # Find config directories
+
+# Logging and errors
+log = "0.4.20"
+env_logger = "0.10.0"
+thiserror = "1.0.48"
+anyhow = "1.0.75"
+
+# Time handling
+chrono = { version = "0.4.31", features = ["serde"] }
+
+# Data processing
+serde_json = "1.0.107"
+sqlx = { version = "0.7.2", features = ["runtime-tokio-native-tls", "sqlite", "json", "chrono"], optional = true }
+rusqlite = { version = "0.29.0", features = ["bundled"], optional = true }
+csv = "1.2.2"
+
+# File system
+notify = "6.1.1"  # File system notifications
+glob = "0.3.1"  # File pattern matching
+
+# Networking and APIs
+reqwest = { version = "0.11.22", features = ["json"], optional = true }
+maxminddb = { version = "0.23.0", optional = true }
+ipnetwork = "0.20.0"  # IP address handling
+
+# Utilities
+lazy_static = "1.4.0"
+parking_lot = "0.12.1"  # Improved mutex implementations
+dashmap = "5.5.3"  # Concurrent hashmap
+rayon = "1.7.0"  # Parallel iterators
+regex = "1.9.5"
+clap = { version = "4.4.6", features = ["derive"] }
+indicatif = "0.17.7"  # Progress bars
+ctrlc = { version = "3.4.1", features = ["termination"] }
+indexmap = { version = "2.0.2", features = ["serde"] }  # Ordered maps
+
+# Session replay
+termion = "2.0.1"  # Terminal manipulation
+
+[features]
+default = ["sqlite-db", "geoip"]
+sqlite-db = ["rusqlite"]
+postgres-db = ["sqlx/postgres"]
+mysql-db = ["sqlx/mysql"]
+geoip = ["maxminddb", "reqwest"]
+system-monitor = []
+network-capture = []
+malware-analysis = []
+
+[dev-dependencies]
+pretty_assertions = "1.4.0"
+tempfile = "3.8.0"
+mockall = "0.11.4"
+criterion = "0.5.1"
+fake = { version = "2.8.0", features ["derive"] }
+rstest = "0.18.2"
+
+[[bench]]
+name = "log_parsing"
+harness = false
+
+[profile.release]
+lto = true
+codegen-units = 1
+opt-level = 3
+strip = true  # Strip symbols from binary
+
+[profile.dev.package."*"]
+opt-level = 3  # Optimize dependencies in debug build

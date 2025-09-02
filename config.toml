@@ -1,0 +1,140 @@
+# xKippo-tui Configuration
+
+[honeypot]
+# Name of the honeypot
+name = "Cowrie Honeypot"
+# Type of honeypot
+honeypot_type = "cowrie"
+# Automatically detect log files
+auto_detect = true
+# How far back to process logs on startup (in hours, 0 = from beginning)
+history_hours = 24
+# Check interval in milliseconds
+check_interval_ms = 1000
+
+# You can specify log paths manually (uncomment and modify)
+# log_paths = [
+#   "/var/log/cowrie/cowrie.json",
+#   "/opt/cowrie/var/log/cowrie/cowrie.json"
+# ]
+
+# Optional paths for downloads and TTY logs
+# download_path = "/opt/cowrie/var/lib/cowrie/downloads"
+# tty_log_path = "/opt/cowrie/var/lib/cowrie/tty"
+
+[ui]
+# UI theme (default, dark, light)
+theme = "default"
+# Enable color
+color_enabled = true
+# Enable mouse support
+mouse_enabled = true
+# Default tab (0 = Dashboard, 1 = Logs, 2 = Sessions, 3 = Settings)
+default_tab = 0
+# Refresh interval in milliseconds
+refresh_interval_ms = 250
+# Enable animations
+animations = true
+# Window title
+terminal_title = "xKippo - Honeypot Monitor"
+# Show border
+show_border = true
+# Border type (plain, rounded, double)
+border_type = "rounded"
+# Date format
+date_format = "%Y-%m-%d"
+# Time format
+time_format = "%H:%M:%S"
+# Show help bar
+show_help = true
+# Show status bar
+show_status = true
+
+[filter]
+# Case-sensitive search
+case_sensitive = false
+# Maximum sessions to display
+max_sessions = 1000
+# Maximum log entries to keep in memory
+max_logs = 10000
+
+# Filter presets
+[[filter.presets]]
+name = "Login Attempts"
+event_type = "LoginAttempt"
+description = "Show only login attempts"
+
+[[filter.presets]]
+name = "Successful Logins"
+event_type = "LoginSuccess"
+description = "Show only successful logins"
+
+[[filter.presets]]
+name = "Commands"
+event_type = "Command"
+description = "Show only command executions"
+
+[[filter.presets]]
+name = "File Transfers"
+event_type = "FileUpload"
+description = "Show only file transfers"
+
+[logging]
+# Enable application logging
+enabled = true
+# Log level (trace, debug, info, warn, error)
+level = "info"
+# Optional log file path (uncomment to enable)
+# file_path = "~/.local/share/xkippo/xkippo.log"
+# Log to console
+console = false
+# Maximum log file size in MB
+max_file_size = 10
+# Maximum number of log files to keep
+max_files = 5
+
+[alert]
+# Enable alerts
+enabled = true
+# Alert on successful login
+on_successful_login = true
+# Alert on file upload
+on_file_upload = true
+# Alert on new source IP
+on_new_source_ip = false
+# Sound alerts
+sound_enabled = false
+# Visual alerts
+visual_enabled = true
+
+# Alert on specific commands (uncomment to enable)
+# on_commands = [
+#   "wget",
+#   "curl",
+#   "tftp",
+#   "chmod +x",
+#   "dd"
+# ]
+
+# IP blacklist (uncomment to enable)
+# ip_blacklist = [
+#   "1.2.3.4",
+#   "5.6.7.8"
+# ]
+
+# IP whitelist (uncomment to enable)
+# ip_whitelist = [
+#   "192.168.1.1"
+# ]
+
+[geoip]
+# Enable GeoIP lookups
+enabled = true
+# Auto-download database if missing
+auto_download = false
+
+# Path to GeoIP database (uncomment to specify)
+# database_path = "~/.local/share/xkippo/geoip/GeoLite2-City.mmdb"
+
+# License key for MaxMind (uncomment to specify)
+# license_key = "YOUR_LICENSE_KEY"
