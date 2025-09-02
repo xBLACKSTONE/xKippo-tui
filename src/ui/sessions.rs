@@ -49,7 +49,7 @@ impl Default for SessionViewState {
 }
 
 /// Render the sessions view
-pub fn render_sessions<B: Backend>(f: &mut Frame<B>, app: &App, area: Rect) {
+pub fn render_sessions(f: &mut Frame, app: &App, area: Rect) {
     // Create sessions layout
     let chunks = Layout::default()
         .direction(Direction::Vertical)
@@ -87,7 +87,7 @@ pub fn render_sessions<B: Backend>(f: &mut Frame<B>, app: &App, area: Rect) {
 }
 
 /// Render the filter bar at the top
-fn render_filter_bar<B: Backend>(f: &mut Frame<B>, app: &App, area: Rect) {
+fn render_filter_bar(f: &mut Frame, app: &App, area: Rect) {
     // Simple filter bar for now
     let block = Block::default()
         .title("Filters [A]ctive [C]losed [M]alicious [All]")
@@ -97,7 +97,7 @@ fn render_filter_bar<B: Backend>(f: &mut Frame<B>, app: &App, area: Rect) {
 }
 
 /// Render the list of sessions
-fn render_session_list<B: Backend>(f: &mut Frame<B>, app: &App, area: Rect) {
+fn render_session_list(f: &mut Frame, app: &App, area: Rect) {
     let store_guard = match app.store.try_read() {
         Ok(guard) => guard,
         Err(_) => return,
@@ -156,7 +156,7 @@ fn render_session_list<B: Backend>(f: &mut Frame<B>, app: &App, area: Rect) {
 }
 
 /// Render the details of a selected session
-fn render_session_details<B: Backend>(f: &mut Frame<B>, app: &App, area: Rect) {
+fn render_session_details(f: &mut Frame, app: &App, area: Rect) {
     let store_guard = match app.store.try_read() {
         Ok(guard) => guard,
         Err(_) => return,

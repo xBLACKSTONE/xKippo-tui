@@ -12,8 +12,13 @@ use std::collections::HashMap;
 use crate::app::App;
 use crate::ui::components::map::WorldMap;
 
+/// Render geography view - interface for UI module
+pub fn render_geography(f: &mut Frame, app: &App, area: Rect) {
+    draw(f, app);
+}
+
 /// Draw the geography view
-pub fn draw<B: Backend>(f: &mut Frame<B>, app: &App) {
+pub fn draw(f: &mut Frame, app: &App) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
         .margin(1)
@@ -30,7 +35,7 @@ pub fn draw<B: Backend>(f: &mut Frame<B>, app: &App) {
 }
 
 /// Draw the title area
-fn draw_title<B: Backend>(f: &mut Frame<B>, app: &App, area: Rect) {
+fn draw_title(f: &mut Frame, app: &App, area: Rect) {
     let title = Paragraph::new(vec![
         Spans::from(vec![
             Span::styled(
@@ -55,7 +60,7 @@ fn draw_title<B: Backend>(f: &mut Frame<B>, app: &App, area: Rect) {
 }
 
 /// Draw the main content area
-fn draw_content<B: Backend>(f: &mut Frame<B>, app: &App, area: Rect) {
+fn draw_content(f: &mut Frame, app: &App, area: Rect) {
     let horizontal_chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([
@@ -69,7 +74,7 @@ fn draw_content<B: Backend>(f: &mut Frame<B>, app: &App, area: Rect) {
 }
 
 /// Draw the world map with attack points
-fn draw_world_map<B: Backend>(f: &mut Frame<B>, app: &App, area: Rect) {
+fn draw_world_map(f: &mut Frame, app: &App, area: Rect) {
     let map_block = Block::default()
         .title("Attack Origins")
         .borders(Borders::ALL);
@@ -94,7 +99,7 @@ fn draw_world_map<B: Backend>(f: &mut Frame<B>, app: &App, area: Rect) {
 }
 
 /// Draw country statistics
-fn draw_country_stats<B: Backend>(f: &mut Frame<B>, app: &App, area: Rect) {
+fn draw_country_stats(f: &mut Frame, app: &App, area: Rect) {
     let vertical_chunks = Layout::default()
         .direction(Direction::Vertical)
         .constraints([
@@ -167,7 +172,7 @@ fn draw_country_stats<B: Backend>(f: &mut Frame<B>, app: &App, area: Rect) {
 }
 
 /// Draw the status bar
-fn draw_status_bar<B: Backend>(f: &mut Frame<B>, app: &App, area: Rect) {
+fn draw_status_bar(f: &mut Frame, app: &App, area: Rect) {
     let status = Paragraph::new(vec![
         Spans::from(vec![
             Span::styled(

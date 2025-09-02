@@ -14,7 +14,7 @@ use crate::app::App;
 use crate::data::{EventType, Session};
 
 /// Render the security analyst dashboard view
-pub fn render_security_dashboard<B: Backend>(f: &mut Frame<B>, app: &App, area: Rect) {
+pub fn render_security_dashboard(f: &mut Frame, app: &App, area: Rect) {
     // Create dashboard layout based on the user's selected layout in config
     let layout = app.config.dashboard.layout.as_str();
     
@@ -26,7 +26,7 @@ pub fn render_security_dashboard<B: Backend>(f: &mut Frame<B>, app: &App, area: 
 }
 
 /// Render standard security layout
-fn render_standard_layout<B: Backend>(f: &mut Frame<B>, app: &App, area: Rect) {
+fn render_standard_layout(f: &mut Frame, app: &App, area: Rect) {
     // Create dashboard layout
     let chunks = Layout::default()
         .direction(Direction::Vertical)
@@ -62,7 +62,7 @@ fn render_standard_layout<B: Backend>(f: &mut Frame<B>, app: &App, area: Rect) {
 }
 
 /// Render security-focused layout
-fn render_security_focused_layout<B: Backend>(f: &mut Frame<B>, app: &App, area: Rect) {
+fn render_security_focused_layout(f: &mut Frame, app: &App, area: Rect) {
     // Create dashboard layout
     let chunks = Layout::default()
         .direction(Direction::Vertical)
@@ -100,7 +100,7 @@ fn render_security_focused_layout<B: Backend>(f: &mut Frame<B>, app: &App, area:
 }
 
 /// Render analytics-focused layout
-fn render_analytics_focused_layout<B: Backend>(f: &mut Frame<B>, app: &App, area: Rect) {
+fn render_analytics_focused_layout(f: &mut Frame, app: &App, area: Rect) {
     // Create dashboard layout
     let chunks = Layout::default()
         .direction(Direction::Vertical)
@@ -138,7 +138,7 @@ fn render_analytics_focused_layout<B: Backend>(f: &mut Frame<B>, app: &App, area
 }
 
 /// Render the threat overview panel
-fn render_threat_overview<B: Backend>(f: &mut Frame<B>, app: &App, area: Rect) {
+fn render_threat_overview(f: &mut Frame, app: &App, area: Rect) {
     let store_guard = match app.store.try_read() {
         Ok(guard) => guard,
         Err(_) => return,
@@ -215,7 +215,7 @@ fn render_threat_overview<B: Backend>(f: &mut Frame<B>, app: &App, area: Rect) {
 }
 
 /// Render threat summary for the analytics view
-fn render_threat_summary<B: Backend>(f: &mut Frame<B>, app: &App, area: Rect) {
+fn render_threat_summary(f: &mut Frame, app: &App, area: Rect) {
     let store_guard = match app.store.try_read() {
         Ok(guard) => guard,
         Err(_) => return,
@@ -305,7 +305,7 @@ fn render_threat_summary<B: Backend>(f: &mut Frame<B>, app: &App, area: Rect) {
 }
 
 /// Render the attack map
-fn render_attack_map<B: Backend>(f: &mut Frame<B>, app: &App, area: Rect) {
+fn render_attack_map(f: &mut Frame, app: &App, area: Rect) {
     let block = Block::default()
         .title("Attack Map")
         .borders(Borders::ALL);
@@ -332,7 +332,7 @@ fn render_attack_map<B: Backend>(f: &mut Frame<B>, app: &App, area: Rect) {
 }
 
 /// Render high risk sessions table
-fn render_high_risk_sessions<B: Backend>(f: &mut Frame<B>, app: &App, area: Rect) {
+fn render_high_risk_sessions(f: &mut Frame, app: &App, area: Rect) {
     let store_guard = match app.store.try_read() {
         Ok(guard) => guard,
         Err(_) => return,
@@ -390,7 +390,7 @@ fn render_high_risk_sessions<B: Backend>(f: &mut Frame<B>, app: &App, area: Rect
 }
 
 /// Render alerts panel
-fn render_alerts_panel<B: Backend>(f: &mut Frame<B>, app: &App, area: Rect) {
+fn render_alerts_panel(f: &mut Frame, app: &App, area: Rect) {
     let store_guard = match app.store.try_read() {
         Ok(guard) => guard,
         Err(_) => return,
@@ -479,7 +479,7 @@ fn render_alerts_panel<B: Backend>(f: &mut Frame<B>, app: &App, area: Rect) {
 }
 
 /// Render threat score distribution
-fn render_threat_scores<B: Backend>(f: &mut Frame<B>, app: &App, area: Rect) {
+fn render_threat_scores(f: &mut Frame, app: &App, area: Rect) {
     let store_guard = match app.store.try_read() {
         Ok(guard) => guard,
         Err(_) => return,
@@ -542,7 +542,7 @@ fn render_threat_scores<B: Backend>(f: &mut Frame<B>, app: &App, area: Rect) {
 }
 
 /// Render malware analysis panel
-fn render_malware_analysis<B: Backend>(f: &mut Frame<B>, app: &App, area: Rect) {
+fn render_malware_analysis(f: &mut Frame, app: &App, area: Rect) {
     let store_guard = match app.store.try_read() {
         Ok(guard) => guard,
         Err(_) => return,
@@ -618,7 +618,7 @@ fn render_malware_analysis<B: Backend>(f: &mut Frame<B>, app: &App, area: Rect) 
 }
 
 /// Render time series chart
-fn render_time_series_chart<B: Backend>(f: &mut Frame<B>, app: &App, area: Rect) {
+fn render_time_series_chart(f: &mut Frame, app: &App, area: Rect) {
     // This would render a time series chart of activity
     // For now, just render a placeholder
     let block = Block::default()
@@ -646,7 +646,7 @@ fn render_time_series_chart<B: Backend>(f: &mut Frame<B>, app: &App, area: Rect)
 }
 
 /// Render command distribution chart
-fn render_command_distribution<B: Backend>(f: &mut Frame<B>, app: &App, area: Rect) {
+fn render_command_distribution(f: &mut Frame, app: &App, area: Rect) {
     let store_guard = match app.store.try_read() {
         Ok(guard) => guard,
         Err(_) => return,
@@ -707,7 +707,7 @@ fn render_command_distribution<B: Backend>(f: &mut Frame<B>, app: &App, area: Re
 }
 
 /// Render geographic distribution
-fn render_geographic_distribution<B: Backend>(f: &mut Frame<B>, app: &App, area: Rect) {
+fn render_geographic_distribution(f: &mut Frame, app: &App, area: Rect) {
     let store_guard = match app.store.try_read() {
         Ok(guard) => guard,
         Err(_) => return,
@@ -770,7 +770,7 @@ fn render_geographic_distribution<B: Backend>(f: &mut Frame<B>, app: &App, area:
 }
 
 /// Render attacker correlation panel
-fn render_attacker_correlation<B: Backend>(f: &mut Frame<B>, app: &App, area: Rect) {
+fn render_attacker_correlation(f: &mut Frame, app: &App, area: Rect) {
     let store_guard = match app.store.try_read() {
         Ok(guard) => guard,
         Err(_) => return,

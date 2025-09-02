@@ -1,9 +1,10 @@
 use std::sync::Arc;
 use serde_json::Value;
 
-use crate::data::store::DataStore;
-use crate::data::models::{LogEntry, Alert};
-use crate::config::settings::Settings;
+use crate::data::Store as DataStore;
+use crate::data::LogEntry;
+use crate::core::alert_engine::Alert;
+use crate::config::Settings;
 
 /// Plugin metadata
 #[derive(Debug, Clone)]

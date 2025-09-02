@@ -14,7 +14,7 @@ use crate::app::App;
 use crate::data::EventType;
 
 /// Render the dashboard view
-pub fn render_dashboard<B: Backend>(f: &mut Frame<B>, app: &App, area: Rect) {
+pub fn render_dashboard(f: &mut Frame, app: &App, area: Rect) {
     // Create dashboard layout
     let chunks = Layout::default()
         .direction(Direction::Vertical)
@@ -52,7 +52,7 @@ pub fn render_dashboard<B: Backend>(f: &mut Frame<B>, app: &App, area: Rect) {
 }
 
 /// Render honeypot summary
-fn render_summary<B: Backend>(f: &mut Frame<B>, app: &App, area: Rect) {
+fn render_summary(f: &mut Frame, app: &App, area: Rect) {
     let store_guard = match app.store.try_read() {
         Ok(guard) => guard,
         Err(_) => return,
@@ -107,7 +107,7 @@ fn render_summary<B: Backend>(f: &mut Frame<B>, app: &App, area: Rect) {
 }
 
 /// Render activity gauges
-fn render_activity<B: Backend>(f: &mut Frame<B>, app: &App, area: Rect) {
+fn render_activity(f: &mut Frame, app: &App, area: Rect) {
     let store_guard = match app.store.try_read() {
         Ok(guard) => guard,
         Err(_) => return,
@@ -164,8 +164,8 @@ fn render_activity<B: Backend>(f: &mut Frame<B>, app: &App, area: Rect) {
 }
 
 /// Helper to render a single gauge
-fn render_gauge<B: Backend>(
-    f: &mut Frame<B>, 
+fn render_gauge(
+    f: &mut Frame, 
     label: &str, 
     ratio: f64, 
     value: usize, 
@@ -182,7 +182,7 @@ fn render_gauge<B: Backend>(
 }
 
 /// Render recent sessions
-fn render_sessions<B: Backend>(f: &mut Frame<B>, app: &App, area: Rect) {
+fn render_sessions(f: &mut Frame, app: &App, area: Rect) {
     let store_guard = match app.store.try_read() {
         Ok(guard) => guard,
         Err(_) => return,
@@ -242,7 +242,7 @@ fn render_sessions<B: Backend>(f: &mut Frame<B>, app: &App, area: Rect) {
 }
 
 /// Render top attackers
-fn render_attackers<B: Backend>(f: &mut Frame<B>, app: &App, area: Rect) {
+fn render_attackers(f: &mut Frame, app: &App, area: Rect) {
     let store_guard = match app.store.try_read() {
         Ok(guard) => guard,
         Err(_) => return,
@@ -290,7 +290,7 @@ fn render_attackers<B: Backend>(f: &mut Frame<B>, app: &App, area: Rect) {
 }
 
 /// Render top credentials
-fn render_credentials<B: Backend>(f: &mut Frame<B>, app: &App, area: Rect) {
+fn render_credentials(f: &mut Frame, app: &App, area: Rect) {
     let store_guard = match app.store.try_read() {
         Ok(guard) => guard,
         Err(_) => return,

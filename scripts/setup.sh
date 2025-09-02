@@ -861,6 +861,88 @@ EOL
 echo -e "${MAGENTA}${BOLD}Welcome to the xKippo-tui advanced security analyst setup.${NC}"
 echo -e "${MAGENTA}This script will configure xKippo-tui for optimal security monitoring of your Cowrie honeypot.${NC}\n"
 
+# Check for required system dependencies
+check_dependencies() {
+  echo -e "${BLUE}${BOLD}[0/7] Checking system dependencies...${NC}"
+  
+  missing_deps=()
+  
+  # Check for pkg-config
+  if ! command -v pkg-config &> /dev/null; then
+    missing_deps+=("pkg-config")
+  fi
+  
+  # Check for other essential build tools
+  if ! command -v cc &> /dev/null && ! command -v gcc &> /dev/null && ! command -v clang &> /dev/null; then
+    missing_deps+=("build-essential or gcc")
+  fi
+  
+  # Check for OpenSSL development packages (often needed for Rust crypto)
+  if ! pkg-config --exists openssl 2>/dev/null; then
+    missing_deps+=("openssl-dev or libssl-dev")
+  fi
+  
+  if [ ${#missing_deps[@]} -gt 0 ]; then
+    echo -e "${YELLOW}⚠ Missing required dependencies: ${missing_deps[*]}${NC}"
+    echo -e "Please install them using your distribution's package manager:"
+    
+    if command -v apt-get &> /dev/null; then
+      echo -e "${CYAN}sudo apt-get update${NC}"
+      echo -e "${CYAN}sudo apt-get install -y pkg-config build-essential libssl-dev${NC}"
+    elif command -v dnf &> /dev/null; then
+      echo -e "${CYAN}sudo dnf install -y pkgconfig gcc openssl-devel${NC}"
+    elif command -v yum &> /dev/null; then
+      echo -e "${CYAN}sudo yum install -y pkgconfig gcc openssl-devel${NC}"
+    elif command -v pacman &> /dev/null; then
+      echo -e "${CYAN}sudo pacman -S pkg-config base-devel openssl${NC}"
+    elif command -v zypper &> /dev/null; then
+      echo -e "${CYAN}sudo zypper install pkg-config gcc libopenssl-devel${NC}"
+    elif command -v brew &> /dev/null; then
+      echo -e "${CYAN}brew install pkg-config openssl${NC}"
+    else
+      echo -e "${YELLOW}Please install these packages with your package manager:${NC}"
+      echo -e "- pkg-config"
+      echo -e "- A C compiler (gcc or clang)"
+      echo -e "- OpenSSL development headers"
+    fi
+    
+    read -p "Do you want to attempt to install these dependencies automatically? (y/n): " install_deps
+    if [[ $install_deps =~ ^[Yy] ]]; then
+      if command -v apt-get &> /dev/null; then
+        echo -e "${CYAN}Installing dependencies with apt-get...${NC}"
+        sudo apt-get update
+        sudo apt-get install -y pkg-config build-essential libssl-dev
+      elif command -v dnf &> /dev/null; then
+        echo -e "${CYAN}Installing dependencies with dnf...${NC}"
+        sudo dnf install -y pkgconfig gcc openssl-devel
+      elif command -v yum &> /dev/null; then
+        echo -e "${CYAN}Installing dependencies with yum...${NC}"
+        sudo yum install -y pkgconfig gcc openssl-devel
+      elif command -v pacman &> /dev/null; then
+        echo -e "${CYAN}Installing dependencies with pacman...${NC}"
+        sudo pacman -S --noconfirm pkg-config base-devel openssl
+      elif command -v zypper &> /dev/null; then
+        echo -e "${CYAN}Installing dependencies with zypper...${NC}"
+        sudo zypper install -y pkg-config gcc libopenssl-devel
+      elif command -v brew &> /dev/null; then
+        echo -e "${CYAN}Installing dependencies with brew...${NC}"
+        brew install pkg-config openssl
+      else
+        echo -e "${RED}✗ Couldn't determine package manager. Please install dependencies manually.${NC}"
+        exit 1
+      fi
+    else
+      echo -e "${RED}✗ Required dependencies missing. Please install them and run the setup again.${NC}"
+      exit 1
+    fi
+  else
+    echo -e "${GREEN}✓ All required system dependencies are installed.${NC}"
+  fi
+}
+
+# Check dependencies before proceeding
+check_dependencies
+
 # Create required directories
 create_directories
 

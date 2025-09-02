@@ -1,4 +1,4 @@
-mod settings;
+pub mod settings;
 
 pub use settings::Config;
 pub use settings::HoneypotConfig;

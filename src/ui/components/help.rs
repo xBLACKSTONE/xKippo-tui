@@ -10,7 +10,7 @@ use tui::{
 use crate::app::App;
 
 /// Draw the help popup
-pub fn draw<B: Backend>(f: &mut Frame<B>, app: &App) {
+pub fn draw(f: &mut Frame, app: &App) {
     let size = f.size();
     
     // Calculate popup size

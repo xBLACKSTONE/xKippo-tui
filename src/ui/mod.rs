@@ -38,7 +38,7 @@ pub use security::*;
 pub use geography::*;
 
 /// Starts the UI event loop
-pub fn start_ui(mut app: App) -> Result<()> {
+pub async fn start_ui(mut app: App) -> Result<()> {
     // Set up terminal
     enable_raw_mode()?;
     let mut stdout = io::stdout();
@@ -205,7 +205,7 @@ async fn handle_app_event(event: AppEvent, app: &mut App) -> Result<()> {
 }
 
 /// Main UI layout and rendering
-fn ui<B: Backend>(f: &mut Frame<B>, app: &App) {
+fn ui(f: &mut Frame, app: &App) {
     let size = f.size();
     
     // Create main layout
@@ -245,7 +245,7 @@ fn ui<B: Backend>(f: &mut Frame<B>, app: &App) {
 }
 
 /// Render the status bar at the bottom of the screen
-fn render_status_bar<B: Backend>(f: &mut Frame<B>, app: &App, area: Rect) {
+fn render_status_bar(f: &mut Frame, app: &App, area: Rect) {
     let status = format!(
         "{} | {} sessions | {} logs | Press '?' for help",
         match app.connection_status {

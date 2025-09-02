@@ -11,7 +11,7 @@ use ratatui::{
 use crate::app::App;
 
 /// Render help dialog
-pub fn render_help<B: Backend>(f: &mut Frame<B>, app: &App, area: Rect) {
+pub fn render_help(f: &mut Frame, app: &App, area: Rect) {
     let block = Block::default()
         .title("Help")
         .borders(Borders::ALL);

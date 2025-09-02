@@ -83,7 +83,7 @@ impl SettingCategory {
 }
 
 /// Render settings view
-pub fn render_settings<B: Backend>(f: &mut Frame<B>, app: &App, area: Rect) {
+pub fn render_settings(f: &mut Frame, app: &App, area: Rect) {
     // Create settings layout
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
@@ -101,7 +101,7 @@ pub fn render_settings<B: Backend>(f: &mut Frame<B>, app: &App, area: Rect) {
 }
 
 /// Render settings categories
-fn render_categories<B: Backend>(f: &mut Frame<B>, app: &App, area: Rect) {
+fn render_categories(f: &mut Frame, app: &App, area: Rect) {
     // Create categories
     let categories = SettingCategory::all();
     
@@ -123,7 +123,7 @@ fn render_categories<B: Backend>(f: &mut Frame<B>, app: &App, area: Rect) {
 }
 
 /// Render settings for selected category
-fn render_settings_for_category<B: Backend>(f: &mut Frame<B>, app: &App, area: Rect, category: SettingCategory) {
+fn render_settings_for_category(f: &mut Frame, app: &App, area: Rect, category: SettingCategory) {
     // Get settings for the category
     let settings_lines = match category {
         SettingCategory::General => render_general_settings(&app.config),

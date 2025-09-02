@@ -45,7 +45,7 @@ impl Default for LogViewState {
 }
 
 /// Render the logs view
-pub fn render_logs<B: Backend>(f: &mut Frame<B>, app: &App, area: Rect) {
+pub fn render_logs(f: &mut Frame, app: &App, area: Rect) {
     // Create logs layout
     let chunks = Layout::default()
         .direction(Direction::Vertical)
@@ -83,7 +83,7 @@ pub fn render_logs<B: Backend>(f: &mut Frame<B>, app: &App, area: Rect) {
 }
 
 /// Render the filter bar at the top
-fn render_filter_bar<B: Backend>(f: &mut Frame<B>, app: &App, area: Rect) {
+fn render_filter_bar(f: &mut Frame, app: &App, area: Rect) {
     let block = Block::default()
         .title("Filters")
         .borders(Borders::ALL);
@@ -103,7 +103,7 @@ fn render_filter_bar<B: Backend>(f: &mut Frame<B>, app: &App, area: Rect) {
 }
 
 /// Render the list of log entries
-fn render_log_list<B: Backend>(f: &mut Frame<B>, app: &App, area: Rect) {
+fn render_log_list(f: &mut Frame, app: &App, area: Rect) {
     let store_guard = match app.store.try_read() {
         Ok(guard) => guard,
         Err(_) => return,
@@ -188,7 +188,7 @@ fn render_log_list<B: Backend>(f: &mut Frame<B>, app: &App, area: Rect) {
 }
 
 /// Render the details of a selected log entry
-fn render_log_details<B: Backend>(f: &mut Frame<B>, app: &App, area: Rect) {
+fn render_log_details(f: &mut Frame, app: &App, area: Rect) {
     let store_guard = match app.store.try_read() {
         Ok(guard) => guard,
         Err(_) => return,

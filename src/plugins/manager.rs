@@ -3,7 +3,7 @@ use std::fs;
 use std::path::Path;
 use std::sync::{Arc, Mutex};
 
-use crate::config::settings::Settings;
+use crate::config::Settings;
 use crate::data::models::LogEntry;
 use crate::data::store::DataStore;
 use crate::plugins::api::{Plugin, PluginMetadata};

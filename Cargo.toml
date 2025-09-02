@@ -1,7 +1,7 @@
 [package]
 name = "xkippo-tui"
 version = "0.1.0"
-edition = "2021"
+edition = "2018"
 authors = ["xKippo Team"]
 description = "A TUI monitoring and management system for Cowrie honeypots"
 readme = "README.md"
@@ -13,16 +13,17 @@ categories = ["command-line-utilities", "security-tools"]
 [dependencies]
 # TUI Libraries
 ratatui = "0.24.0"  # TUI framework
-crossterm = "0.27.0"  # Terminal backend
+tui = { version = "0.19.0", default-features = false, features = ["crossterm"], package = "ratatui" }  # Aliased as tui for backward compatibility
+crossterm = "0.26.0"  # Terminal backend
 tui-textarea = "0.2.0"  # Text input widget
 
 # Async Runtime
-tokio = { version = "1.32.0", features = ["full"] }
+tokio = { version = "1.28.0", features = ["full"] }
 
 # Configuration
 serde = { version = "1.0.188", features = ["derive"] }
-toml = "0.8.0"
-dirs = "5.0.1"  # Find config directories
+toml = "0.7.0"
+dirs = "4.0.0"  # Find config directories
 
 # Logging and errors
 log = "0.4.20"
@@ -31,10 +32,10 @@ thiserror = "1.0.48"
 anyhow = "1.0.75"
 
 # Time handling
-chrono = { version = "0.4.31", features = ["serde"] }
+chrono = { version = "0.4.26", features = ["serde"] }
 
 # Data processing
-serde_json = "1.0.107"
+serde_json = "1.0.99"
 sqlx = { version = "0.7.2", features = ["runtime-tokio-native-tls", "sqlite", "json", "chrono"], optional = true }
 rusqlite = { version = "0.29.0", features = ["bundled"], optional = true }
 csv = "1.2.2"
@@ -58,6 +59,7 @@ clap = { version = "4.4.6", features = ["derive"] }
 indicatif = "0.17.7"  # Progress bars
 ctrlc = { version = "3.4.1", features = ["termination"] }
 indexmap = { version = "2.0.2", features = ["serde"] }  # Ordered maps
+uuid = { version = "1.4.1", features = ["v4", "serde"] }  # UUID generation
 
 # Session replay
 termion = "2.0.1"  # Terminal manipulation
