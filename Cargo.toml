@@ -66,10 +66,13 @@ uuid = { version = "1.4.1", features = ["v4", "serde"] }  # UUID generation
 termion = "2.0.1"  # Terminal manipulation
 
 # ICU compatibility fixes for Rust 1.75.0
-icu_normalizer_data = "=1.0.0"
-icu_provider = "=1.2.0"
-icu_provider_adapters = "=1.2.0"
-icu_collections = "=1.2.0"
+icu_normalizer_data = "=2.0.0"
+icu_provider = "=2.0.0"
+icu_provider_adapters = "=2.0.0"
+icu_collections = "=2.0.0"
+icu_normalizer = "=2.0.0"
+idna_adapter = "=1.2.1"
+idna = "=1.1.0"
 regex-syntax = "=0.8.2"
 
 [features]
