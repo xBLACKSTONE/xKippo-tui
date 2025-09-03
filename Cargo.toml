@@ -19,6 +19,7 @@ tui-textarea = "0.2.0"  # Text input widget
 # Async Runtime
 tokio = { version = "1.28.0", features = ["full"] }
 
+
 # Configuration
 serde = { version = "1.0.188", features = ["derive"] }
 toml = "0.7.0"
@@ -54,7 +55,7 @@ parking_lot = "0.12.1"  # Improved mutex implementations
 dashmap = "5.5.3"  # Concurrent hashmap
 rayon = "=1.7.0"  # Parallel iterators
 rayon-core = "=1.11.0"  # Pinned to version compatible with rustc 1.75.0
-regex = "1.9.5"
+regex = "=1.9.5"
 clap = { version = "4.4.6", features = ["derive"] }
 indicatif = "0.17.7"  # Progress bars
 ctrlc = { version = "3.4.1", features = ["termination"] }
@@ -63,6 +64,13 @@ uuid = { version = "1.4.1", features = ["v4", "serde"] }  # UUID generation
 
 # Session replay
 termion = "2.0.1"  # Terminal manipulation
+
+# ICU compatibility fixes for Rust 1.75.0
+icu_normalizer_data = "=1.0.0"
+icu_provider = "=1.2.0"
+icu_provider_adapters = "=1.2.0"
+icu_collections = "=1.2.0"
+regex-syntax = "=0.8.2"
 
 [features]
 default = ["sqlite-db", "geoip"]
