@@ -26,3 +26,11 @@ local_config.toml
 # OS specific files
 .DS_Store
 Thumbs.db
+
+#Hive
+.claude-flow
+.hive-mind
+hive.db
+hive.db-shm
+hive.db-wal
+memory.db
