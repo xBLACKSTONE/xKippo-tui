@@ -2,6 +2,11 @@
 
 # xKippo-tui dependency update script
 # This script helps update and verify dependencies for xKippo-tui
+#
+# This script will automatically fix common dependency issues:
+# - Downgrade icu_normalizer_data for Rust 1.75.0 compatibility
+# - Fix problematic dependencies with version conflicts
+# - Handle Rust version requirements
 
 set -e
 
@@ -59,34 +64,81 @@ fi
 echo -e "\n${BLUE}Checking for dependency issues...${NC}"
 
 # Run cargo check to verify dependencies
-cargo check
-if [ $? -ne 0 ]; then
+cargo check 2>&1 | tee /tmp/cargo_check_output.log
+CHECK_RESULT=$?
+
+# Known dependency issues to automatically fix
+FIX_ICU_NORMALIZER="false"
+OTHER_FIXES_NEEDED="false"
+
+# Parse error output for known issues
+if [ $CHECK_RESULT -ne 0 ]; then
     echo -e "${RED}There are issues with dependencies.${NC}"
     
-    # Suggest some common fixes
-    echo -e "\n${YELLOW}Suggested fixes:${NC}"
-    echo -e "1. Make sure you're using Rust version $TOOLCHAIN_VERSION"
-    echo -e "2. Update dependencies with: cargo update"
-    echo -e "3. Clean build artifacts: cargo clean"
-    echo -e "4. Check for specific version conflicts in Cargo.lock"
+    # Check for icu_normalizer_data error
+    if grep -q "package .icu_normalizer_data.*cannot be built because it requires rustc" /tmp/cargo_check_output.log; then
+        echo -e "${YELLOW}Detected icu_normalizer_data version issue. Will attempt to fix.${NC}"
+        FIX_ICU_NORMALIZER="true"
+    fi
     
-    # Ask if they want to try to fix automatically
-    read -p "Would you like to try to fix dependencies automatically? (y/n): " fix_deps
-    if [[ $fix_deps =~ ^[Yy] ]]; then
-        echo -e "\n${BLUE}Running cargo update...${NC}"
-        cargo update
-        echo -e "\n${BLUE}Running cargo clean...${NC}"
+    # Look for other package version issues
+    PACKAGE_VERSION_ISSUES=$(grep -o "package .\+@[0-9]\+\.[0-9]\+\.[0-9]\+.* cannot be built" /tmp/cargo_check_output.log | sed 's/package `\(.*\)` cannot be built.*/\1/')
+    if [ -n "$PACKAGE_VERSION_ISSUES" ]; then
+        echo -e "${YELLOW}Detected version issues with these packages:${NC}"
+        echo "$PACKAGE_VERSION_ISSUES" | while read -r pkg; do
+            echo -e "- $pkg"
+        done
+        OTHER_FIXES_NEEDED="true"
+    fi
+    
+    # Apply known fixes or suggest manual intervention
+    echo -e "\n${YELLOW}Applying automatic fixes:${NC}"
+    
+    if [ "$FIX_ICU_NORMALIZER" = "true" ]; then
+        echo -e "${BLUE}Fixing icu_normalizer_data dependency...${NC}"
+        cargo update -p icu_normalizer_data --precise 1.0.0
+        if [ $? -eq 0 ]; then
+            echo -e "${GREEN}✓ Successfully downgraded icu_normalizer_data to version compatible with Rust 1.75.0${NC}"
+        else
+            echo -e "${RED}Failed to downgrade icu_normalizer_data automatically${NC}"
+        fi
+    fi
+    
+    if [ "$FIX_ICU_NORMALIZER" = "true" ] || [ "$OTHER_FIXES_NEEDED" = "true" ]; then
+        echo -e "\n${BLUE}Cleaning and checking again with fixed dependencies...${NC}"
         cargo clean
-        echo -e "\n${BLUE}Checking dependencies again...${NC}"
         cargo check
         
         if [ $? -eq 0 ]; then
             echo -e "${GREEN}✓ Dependencies fixed successfully!${NC}"
         else
-            echo -e "${RED}Automatic fix failed. You may need to manually resolve dependency issues.${NC}"
-            echo -e "Try examining the Cargo.lock file and comparing with specific version requirements."
+            echo -e "${RED}Some dependency issues still remain.${NC}"
+            
+            # Extract recommendations from error message
+            RECOMMENDATIONS=$(grep -A 2 "use.*cargo update" /tmp/cargo_check_output.log | grep -v "^error")
+            if [ -n "$RECOMMENDATIONS" ]; then
+                echo -e "${YELLOW}Recommended commands from error message:${NC}"
+                echo -e "$RECOMMENDATIONS"
+                
+                # Offer to execute the recommended command
+                CMD=$(echo "$RECOMMENDATIONS" | grep "cargo update" | tr -d ' ')
+                if [ -n "$CMD" ]; then
+                    read -p "Execute the recommended command? (y/n): " exec_cmd
+                    if [[ $exec_cmd =~ ^[Yy] ]]; then
+                        eval "$CMD"
+                        cargo clean
+                        cargo check
+                    fi
+                fi
+            fi
         fi
     fi
+else
+    echo -e "${GREEN}✓ All dependencies look good!${NC}"
+fi
+
+# Clean up temporary files
+rm -f /tmp/cargo_check_output.log
 else
     echo -e "${GREEN}✓ All dependencies look good!${NC}"
 fi
@@ -94,11 +146,13 @@ fi
 # Offer to update specific dependencies that are causing issues
 echo -e "\n${BLUE}Common dependency troubleshooting:${NC}"
 echo -e "1. Update specific dependency"
-echo -e "2. Check dependency tree"
-echo -e "3. Generate Cargo.lock"
-echo -e "4. Exit"
+echo -e "2. Downgrade a dependency to specific version"
+echo -e "3. Check dependency tree"
+echo -e "4. Run advanced dependency fix"
+echo -e "5. Generate Cargo.lock"
+echo -e "6. Exit"
 
-read -p "Choose an option (1-4): " dep_option
+read -p "Choose an option (1-6): " dep_option
 
 case $dep_option in
     1)
@@ -109,13 +163,53 @@ case $dep_option in
         fi
         ;;
     2)
+        read -p "Enter dependency name to downgrade (e.g. icu_normalizer_data): " dep_name
+        if [ -n "$dep_name" ]; then
+            read -p "Enter version to use (e.g. 1.0.0): " dep_version
+            if [ -n "$dep_version" ]; then
+                echo -e "${BLUE}Downgrading $dep_name to version $dep_version...${NC}"
+                cargo update -p $dep_name --precise $dep_version
+                if [ $? -eq 0 ]; then
+                    echo -e "${GREEN}✓ Successfully downgraded $dep_name to version $dep_version${NC}"
+                else
+                    echo -e "${RED}Failed to downgrade $dep_name${NC}"
+                fi
+            fi
+        fi
+        ;;
+    3)
         if ! command -v cargo-tree &> /dev/null; then
             echo -e "${YELLOW}cargo-tree not found. Installing...${NC}"
             cargo install cargo-tree
         fi
         cargo tree
         ;;
-    3)
+    4)
+        echo -e "${BLUE}Running advanced dependency fix...${NC}"
+        echo -e "${YELLOW}This will attempt to fix common dependency issues by downgrading problematic packages${NC}"
+        
+        # List of known problematic dependencies with compatible versions for Rust 1.75.0
+        echo -e "${BLUE}Downgrading known problematic dependencies...${NC}"
+        
+        cargo update -p icu_normalizer_data --precise 1.0.0
+        cargo update -p regex --precise 1.9.5
+        cargo update -p regex-syntax --precise 0.8.2
+        cargo update -p icu_provider --precise 1.2.0
+        cargo update -p icu_provider_adapters --precise 1.2.0
+        cargo update -p icu_collections --precise 1.2.0
+        
+        echo -e "${BLUE}Cleaning and checking again...${NC}"
+        cargo clean
+        cargo check
+        
+        if [ $? -eq 0 ]; then
+            echo -e "${GREEN}✓ Advanced dependency fix successful!${NC}"
+        else
+            echo -e "${RED}Some dependency issues still remain.${NC}"
+            echo -e "${YELLOW}You may need to manually edit Cargo.toml to pin problematic dependencies.${NC}"
+        fi
+        ;;
+    5)
         echo -e "${BLUE}Generating Cargo.lock file...${NC}"
         cargo generate-lockfile
         echo -e "${GREEN}✓ Generated new Cargo.lock file${NC}"
@@ -127,4 +221,11 @@ esac
 
 echo -e "\n${GREEN}${BOLD}Dependency check completed!${NC}"
 echo -e "You can now build xKippo-tui with: ./scripts/install.sh"
+echo -e "\n${YELLOW}TIP: If you still encounter issues, try the following:${NC}"
+echo -e "1. Run this script again and choose option 4 (Run advanced dependency fix)"
+echo -e "2. Manually edit Cargo.toml to add version constraints for problematic dependencies:"
+echo -e "   regex = \"=1.9.5\""
+echo -e "   icu_normalizer_data = \"=1.0.0\""
+echo -e "   icu_provider = \"=1.2.0\""
+echo -e "3. For Rust 1.75.0 compatibility, avoid dependencies requiring Rust 1.82.0 or newer"
 exit 0
