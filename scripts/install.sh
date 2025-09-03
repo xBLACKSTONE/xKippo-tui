@@ -38,6 +38,32 @@ if ! pkg-config --exists openssl 2>/dev/null; then
     missing_deps+=("openssl-dev or libssl-dev")
 fi
 
+# Check for Rust version
+if ! command -v rustc &> /dev/null; then
+    missing_deps+=("rust")
+else
+    # Get installed Rust version
+    RUST_VERSION=$(rustc --version | cut -d' ' -f2)
+    REQUIRED_VERSION="1.75.0"
+    
+    # Compare versions
+    if ! command -v python3 &> /dev/null; then
+        echo -e "${YELLOW}Warning: Python3 not found, cannot compare Rust versions precisely.${NC}"
+        echo -e "${YELLOW}You may need Rust $REQUIRED_VERSION or later.${NC}"
+    else
+        VERSION_CHECK=$(python3 -c "from packaging import version; print(version.parse('$RUST_VERSION') < version.parse('$REQUIRED_VERSION'))" 2>/dev/null)
+        if [ "$?" -ne 0 ]; then
+            echo -e "${YELLOW}Warning: Could not compare Rust versions. Python 'packaging' module might be missing.${NC}"
+            echo -e "${YELLOW}Please ensure you have Rust $REQUIRED_VERSION or later.${NC}"
+        elif [ "$VERSION_CHECK" = "True" ]; then
+            echo -e "${YELLOW}Warning: Rust $RUST_VERSION is older than required version $REQUIRED_VERSION${NC}"
+            echo -e "${YELLOW}Please update your Rust installation:${NC}"
+            echo -e "  rustup update stable"
+            # Don't fail the build yet, just warn
+        fi
+    fi
+fi
+
 if [ ${#missing_deps[@]} -gt 0 ]; then
     echo -e "${RED}Missing required dependencies: ${missing_deps[*]}${NC}"
     echo -e "${YELLOW}Please install them using your distribution's package manager:${NC}"
@@ -79,9 +105,18 @@ fi
 
 echo -e "${GREEN}✓ All dependencies are installed.${NC}"
 
-# Build the project
-echo -e "\n${BLUE}Building xKippo-tui...${NC}"
-cargo build --release
+# Build the project with pinned dependency versions
+echo -e "\n${BLUE}Building xKippo-tui with correct dependency versions...${NC}"
+
+# Check for rust-toolchain.toml to ensure correct Rust version
+if [ -f "rust-toolchain.toml" ]; then
+    echo -e "${GREEN}✓ Using rust-toolchain.toml for Rust version${NC}"
+else
+    echo -e "${YELLOW}Warning: rust-toolchain.toml not found. This may cause dependency version issues.${NC}"
+fi
+
+# Ensure exact versions from Cargo.toml are used
+cargo build --release --locked
 
 if [ $? -ne 0 ]; then
     echo -e "${RED}Build failed. Please check the error messages above.${NC}"
