@@ -11,8 +11,16 @@ keywords = ["honeypot", "cowrie", "security", "tui", "monitoring"]
 categories = ["command-line-utilities", "security-tools"]
 
 [dependencies]
+# Dependency constraints for Rust 1.75.0 compatibility
+icu_properties = "=1.0.0"
+icu_properties_data = "=1.0.0"
+icu_provider = "=1.0.0"
+icu_provider_adapters = "=1.0.0"
+icu_provider_fs = "=1.0.0"
+icu_testdata = "=1.0.0"
+
 # TUI Libraries
-ratatui = "0.23.0"  # TUI framework
+ratatui = "=0.23.0"  # TUI framework
 crossterm = "0.26.0"  # Terminal backend
 tui-textarea = "0.2.0"  # Text input widget
 
