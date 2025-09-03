@@ -44,7 +44,7 @@ BEGIN { in_dependencies = 0; modified = 0; }
 /^\[dependencies\]/ { in_dependencies = 1; print; next; }
 /^\[/ && !/^\[dependencies\]/ { in_dependencies = 0; print; next; }
 in_dependencies && /^icu_normalizer_data/ {
-    print "icu_normalizer_data = \"=2.0.0\""; 
+    print "icu_normalizer_data = \"=1.5.0\""; 
     modified = 1;
     next;
 }
@@ -59,17 +59,17 @@ in_dependencies && /^regex-syntax\s*=/ {
     next;
 }
 in_dependencies && /^icu_provider\s*=/ {
-    print "icu_provider = \"=2.0.0\"";
+    print "icu_provider = \"=1.5.0\"";
     modified = 1;
     next;
 }
 in_dependencies && /^icu_provider_adapters\s*=/ {
-    print "icu_provider_adapters = \"=2.0.0\"";
+    print "icu_provider_adapters = \"=1.5.0\"";
     modified = 1;
     next;
 }
 in_dependencies && /^icu_collections\s*=/ {
-    print "icu_collections = \"=2.0.0\"";
+    print "icu_collections = \"=1.5.0\"";
     modified = 1;
     next;
 }
@@ -91,12 +91,12 @@ cargo update
 
 # Additional targeted version fixes
 echo -e "${BLUE}Applying targeted version fixes...${NC}"
-cargo update -p icu_normalizer_data --precise 2.0.0
+cargo update -p icu_normalizer_data --precise 1.5.0
 cargo update -p regex --precise 1.9.5
 cargo update -p regex-syntax@0.8.2
-cargo update -p icu_provider --precise 2.0.0
-cargo update -p icu_provider_adapters --precise 2.0.0
-cargo update -p icu_collections --precise 2.0.0
+cargo update -p icu_provider --precise 1.5.0
+cargo update -p icu_provider_adapters --precise 1.5.0
+cargo update -p icu_collections --precise 1.5.0
 
 # Check if the fixes worked
 echo -e "${BLUE}Verifying dependency fixes...${NC}"
@@ -171,11 +171,12 @@ uuid = { version = "=1.4.1", features = ["v4", "serde"] }  # UUID generation
 termion = "=2.0.1"  # Terminal manipulation
 
 # Explicitly downgraded for Rust 1.75.0 compatibility
-icu_normalizer_data = "=2.0.0"
-icu_normalizer = "=2.0.0"
-icu_provider = "=2.0.0"
-icu_provider_adapters = "=2.0.0" 
-icu_collections = "=2.0.0"
+icu_normalizer_data = "=1.5.0"
+icu_normalizer = "=1.5.0"
+icu_provider = "=1.5.0"
+icu_provider_adapters = "=1.5.0" 
+icu_collections = "=1.5.0"
+icu_locale_core = "=1.5.0"
 idna_adapter = "=1.2.1"
 idna = "=1.1.0"
 
